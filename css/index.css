@@ -16,5 +16,12 @@ body {
 
 ng-map {
     width: 100vw;
-    height: 100vh;
+    height: 75vh;
+}
+
+.content {
+    width: 100vw;
+    height: 25vh;
+    /* Color matches Google Maps park colors */
+    background-color: #c0ecae;
 }

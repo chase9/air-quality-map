@@ -1,21 +1,39 @@
 <!DOCTYPE html>
 <html ng-app="myApp">
 <head>
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
 
     <link rel="stylesheet" href="css/index.css" type="text/css">
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBbz2rOaxZ6BveMBVYl8ZzjRzC0mBdxEyE"r></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBbz2rOaxZ6BveMBVYl8ZzjRzC0mBdxEyE" r></script>
     <script src="js/ng-map.min.js"></script>
     <script src="js/index.js"></script>
 </head>
 
 <body ng-controller="MyCtrl as vm">
-    <ng-map center="{{vm.center}}" on-dragend="vm.updateLocation()"></ng-map>
+<ng-map center="{{vm.center}}" on-dragend="vm.updateLocation()"></ng-map>
 
-    <div class="overlay">
-        <input ng-model="vm.center" />
-    </div>
+<!-- Overlay on the map -->
+<div class="overlay">
+    <input ng-model="vm.center"/>
+</div>
+
+<!-- Bottom content (table and such) -->
+<div class="content">
+    <table>
+        <tr>Air Quality Readings</tr>
+        <tr>
+            <td>Address:</td>
+            <td ng-bind="vm.address"></td>
+        </tr>
+        <tr>
+            <td>Air Quality:</td>
+            <td ng-bind="vm.aqAverage"></td>
+        </tr>
+    </table>
+</div>
 </body>
 </html>
