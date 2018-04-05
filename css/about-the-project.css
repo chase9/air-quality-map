@@ -3,6 +3,10 @@ h1 {
     margin: 0;
 }
 
+p {
+    text-align: justify;
+}
+
 .user-section {
     width: 50vw;
     height: 50vh;
@@ -10,15 +14,36 @@ h1 {
     padding-left: 1em;
     padding-right: 1em;
 
-    border-bottom: 2px solid black;
-    margin-bottom: 1em;
+    margin-bottom: 1.5em;
+    margin-top: 1.5em;
 }
 
 .user-section:first-child {
-    border-right: 2px solid black;
+    border-right: 1px solid black;
+}
+
+.user-section img {
+    display: block;
+
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1em;
+
+    width: 25%;
+
+    -webkit-box-shadow: 7px 7px 19px -2px rgba(0,0,0,0.75);
+    -moz-box-shadow: 7px 7px 19px -2px rgba(0,0,0,0.75);
+    box-shadow: 7px 7px 19px -2px rgba(0,0,0,0.75);
 }
 
 .video-section {
+    margin-bottom: -500px;
+    padding-top: 1em;
+
     width: 100vw;
-    height: calc(50vh - 1em - 2px);
+    height: calc(50vh - 4em - 2px);
+
+    -webkit-box-shadow: 0 -8px 33px -1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0 -8px 33px -1px rgba(0,0,0,0.75);
+    box-shadow: 0 -8px 33px -1px rgba(0,0,0,0.75);
 }
