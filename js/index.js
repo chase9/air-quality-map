@@ -1,9 +1,11 @@
-angular.module('myApp', ['ngMap']).controller('MyCtrl', function (NgMap, $http) {
-    var vm = this;
+angular.module('myApp', ['ngMap'])
 
+.controller('MyCtrl', function (NgMap, $http) {
+    let vm = this;
+
+    vm.aqAverage = 0.0;
     vm.center = 'Minneapolis';
     vm.address = 'Minneapolis';
-    vm.aqAverage = 0.0;
 
     NgMap.getMap().then(function (map) {
         vm.map = map;
@@ -24,7 +26,6 @@ angular.module('myApp', ['ngMap']).controller('MyCtrl', function (NgMap, $http) 
             });
     };
 });
-
 
 /**
  * This function finds the average of air quality measurements returned from openAQ.
