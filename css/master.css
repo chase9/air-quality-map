@@ -10,4 +10,10 @@ body {
 
 .flex-container {
     display: flex;
+    flex-wrap: wrap;
+}
+
+h1 {
+    text-align: center;
+    margin: 0;
 }

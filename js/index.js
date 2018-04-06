@@ -1,46 +1,53 @@
 angular.module('myApp', ['ngMap'])
 
-.controller('MyCtrl', function (NgMap, $http) {
-    let vm = this;
+    .controller('MyCtrl', function (NgMap, $http) {
 
-    vm.aqAverage = 0.0;
-    vm.center = 'Minneapolis';
-    vm.address = 'Minneapolis';
+        let vm = this;
 
-    NgMap.getMap().then(function (map) {
-        vm.map = map;
+        vm.aqAverage = 0.0;
+        vm.center = 'Minneapolis';
+        vm.address = 'Minneapolis';
+        vm.measurements = [];
+
+        NgMap.getMap().then(function (map) {
+            vm.map = map;
+        });
+
+        vm.updateLocation = function () {
+            let center = vm.map.getCenter();
+            vm.center = center.lat() + "," + center.lng();
+
+            $.ajax("https://nominatim.openstreetmap.org/reverse?format=json&lat=" + center.lat() + "&lon=" + center.lng())
+                .then((response) => {
+                    vm.address = response['display_name'];
+                });
+
+            $http.get("https://api.openaq.org/v1/measurements?coordinates=" + vm.center)
+                .then(function (response) {
+                    let results = processAQ(response.data);
+                    vm.aqAverage = results.average;
+                    vm.measurements = results.measurements;
+                    console.log(results);
+                });
+        };
     });
-
-    vm.updateLocation = function () {
-        let center = vm.map.getCenter();
-        vm.center = center.lat() + "," + center.lng();
-
-        $.ajax("https://nominatim.openstreetmap.org/reverse?format=json&lat=" + center.lat() + "&lon=" + center.lng())
-            .then((response) => {
-                vm.address = response['display_name'];
-            });
-
-        $http.get("https://api.openaq.org/v1/measurements?coordinates=" + vm.center)
-            .then(function (response) {
-                vm.aqAverage = averageAQ(response.data);
-            });
-    };
-});
 
 /**
  * This function finds the average of air quality measurements returned from openAQ.
  * @param aqResponse the response data from a call to api.openaq.org/v1/measurements
- * @returns {number} a double indicating the air quality average of the measurements
+ * @returns {{average: number, measurements: Array}}
  */
-function averageAQ(aqResponse) {
+function processAQ(aqResponse) {
     let aqAverage = 0.0;
     let count = 0;
+    let measurements = [];
 
     // Iterate through each of the aq results
     $.each(aqResponse['results'], (i, item) => {
-        aqAverage += item.value;
+        measurements.push({address: item['city'], reading: item['value']});
+        aqAverage += item['value'];
         count = i + 1;
     });
 
-    return aqAverage / count;
+    return {average: (aqAverage / count), measurements: measurements};
 }

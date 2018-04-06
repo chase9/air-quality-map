@@ -7,18 +7,25 @@
 
 .overlay input {
     height: 2em;
-    width: 500px;
 }
 
 ng-map {
-    width: 100vw;
-    height: 75vh;
+    width: 70vw;
+    min-width: 500px;
+    height: 100vh;
 }
 
 .content {
-    padding: 1em;
-    width: 100vw;
-    height: 25vh;
+    width: 30vw;
+    height: 100vh;
     /* Color matches Google Maps park colors */
-    background-color: #c0ecae;
+    background-color: white;
+}
+
+.content table tbody {
+    display: block;
+    top: 50vh;
+    max-height: 50vh;
+    overflow: scroll;
+    justify-items: center;
 }

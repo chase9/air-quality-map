@@ -17,28 +17,34 @@
 </head>
 
 <body ng-controller="MyCtrl as vm">
+<div class="flex-container">
+    <ng-map center="{{vm.center}}" on-dragend="vm.updateLocation()"></ng-map>
 
-<ng-map center="{{vm.center}}" on-dragend="vm.updateLocation()"></ng-map>
+    <!-- Overlay on the map -->
+    <div class="overlay">
+        <input ng-model="vm.center"/>
+    </div>
 
-<!-- Overlay on the map -->
-<div class="overlay">
-    <input ng-model="vm.center"/>
+    <!-- Bottom content (table and such) -->
+    <div class="content">
+        <table>
+            <tr><h1>Air Quality Readings</h1></tr>
+            <tr>
+                <td><h4>Address:</h4></td>
+                <td><h4 ng-bind="vm.address"></h4></td>
+            </tr>
+            <tr>
+                <td><h4>Air Quality:</h4></td>
+                <td><h4 ng-bind="vm.aqAverage || 'No data available'"></h4></td>
+            </tr>
+        </table>
+        <table>
+            <tr ng-repeat="x in vm.measurements track by $index">
+                <td>{{x.address}}</td>
+                <td>{{x.reading}}</td>
+            </tr>
+        </table>
+    </div>
 </div>
-
-<!-- Bottom content (table and such) -->
-<div class="content">
-    <table>
-        <tr>Air Quality Readings</tr>
-        <tr>
-            <td>Address:</td>
-            <td ng-bind="vm.address"></td>
-        </tr>
-        <tr>
-            <td>Air Quality:</td>
-            <td ng-bind="vm.aqAverage || 'No data available'"></td>
-        </tr>
-    </table>
-</div>
-
 </body>
 </html>
