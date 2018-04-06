@@ -6,6 +6,7 @@ angular.module('myApp', ['ngMap'])
 
         vm.aqAverage = 0.0;
         vm.center = '44.97772264248057,-93.26501080000003';
+        vm.radius = 0;
         vm.address = 'Minneapolis, Minnesota (US)';
         vm.measurements = [];
         vm.markers = [];
@@ -41,11 +42,15 @@ angular.module('myApp', ['ngMap'])
 
         vm.updateLocation = function () {
 
-            toDatePicker.datepicker("option", "minDate", fromDatePicker.val());
-
+            // Update the center of our map
             let center = vm.map.getCenter();
             vm.center = center.lat() + "," + center.lng();
 
+            // Update the radius of our map
+            vm.radius = getMapRadius(vm.map);
+            console.log(vm.radius);
+
+            // Get the address of the center of our map
             $.ajax("https://nominatim.openstreetmap.org/reverse?format=json&lat=" + center.lat() + "&lon=" + center.lng())
                 .then((response) => {
                     let addressString = "";
@@ -58,21 +63,27 @@ angular.module('myApp', ['ngMap'])
                     vm.address = addressString;
                 });
 
+            // Declare and initialize our date picker
+            toDatePicker.datepicker("option", "minDate", fromDatePicker.val());
+
             let dateFrom = fromDatePicker.datepicker('getDate');
             let dateTo = toDatePicker.datepicker('getDate');
 
             dateFrom = dateFrom.getUTCFullYear() + "-" + dateFrom.getUTCMonth() + "-" + dateFrom.getUTCDay();
             dateTo = dateTo.getUTCFullYear() + "-" + dateTo.getUTCMonth() + "-" + dateTo.getUTCDay();
 
-            $.ajax("https://api.openaq.org/v1/measurements?coordinates=" + vm.center + "&date_from=" + dateFrom + "&date_to=" + dateTo)
+            // Make a call to retrieve air quality data
+            $.ajax("https://api.openaq.org/v1/measurements?coordinates=" + vm.center + "&radius=" + vm.radius + "&date_from=" + dateFrom + "&date_to=" + dateTo)
                 .then((response) => {
 
                     console.log(response);
 
+                    // Update the variables that contain our data
                     let results = processAQ(response);
                     vm.aqAverage = results.average;
                     vm.measurements = results.measurements;
 
+                    // Create all markers on our map based on the data
                     createMarker(vm.map, response, vm.markers, vm.markerCluster);
                 });
         };
@@ -186,4 +197,33 @@ function markerExists(coordinates, markers) {
     });
 
     return found;
+}
+
+function getMapRadius(map) {
+    let bounds = map.getBounds();
+
+    let diameter = getDistanceFromLatLonInKm(
+        bounds.getNorthEast().lat(), bounds.getNorthEast().lng(),
+        bounds.getSouthWest().lat(), bounds.getSouthWest().lng()
+    ) * 1000;
+
+    return diameter / 2;
+}
+
+// https://stackoverflow.com/questions/27928/calculate-distance-between-two-latitude-longitude-points-haversine-formula?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
+    let R = 6371; // Radius of the earth in km
+    let dLat = deg2rad(lat2-lat1);  // deg2rad below
+    let dLon = deg2rad(lon2-lon1);
+    let a =
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon/2) * Math.sin(dLon/2)
+    ;
+    let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    let d = R * c; // Distance in km
+    return d;
+}
+function deg2rad(deg) {
+    return deg * (Math.PI/180)
 }
