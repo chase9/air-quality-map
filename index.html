@@ -31,43 +31,49 @@
     </div>
 
     <div id="filter-overlay" class="overlay">
-        <ul>
-            <li><h4>Dates</h4></li>
-            <li><p>Date From: <input type="text" id="fromDatePicker" ng-model="vm.dateFrom" ng-change="vm.updateLocation()"></p></li>
-            <li><p>Date To: <input type="text" id="toDatePicker" ng-model="vm.dateTo" ng-change="vm.updateLocation()"></p></li>
-            <hr>
-            <li><h4>Particles</h4></li>
-            <table>
-                <tr>
-                    <td><p><label><input type="checkbox" id="particle-select-pm25" checked> pm25</label></td>
-                    <td>: from <input class="number-input" type="number" id="particle-select-pm25-from"> to <input class="number-input" type="number" id="particle-select-pm25-to"></p></td>
-                </tr>
-                <tr>
-                    <td><p><label><input type="checkbox" id="particle-select-pm10" checked> pm10</label></td>
-                    <td>: from <input class="number-input" type="number" id="particle-select-pm10-from"> to <input class="number-input" type="number" id="particle-select-pm10-to"></p></td>
-                </tr>
-                <tr>
-                    <td><p><label><input type="checkbox" id="particle-select-so2" checked> so2</label></td>
-                    <td>: from <input class="number-input" type="number" id="particle-select-so2-from"> to <input class="number-input" type="number" id="particle-select-so2-to"></p></td>
-                </tr>
-                <tr>
-                    <td><p><label><input type="checkbox" id="particle-select-no2" checked> no2</label></td>
-                    <td>: from <input class="number-input" type="number" id="particle-select-no2-from"> to <input class="number-input" type="number" id="particle-select-no2-to"></p></td>
-                </tr>
-                <tr>
-                    <td><p><label><input type="checkbox" id="particle-select-o3" checked> o3</label></td>
-                    <td>: from <input class="number-input" type="number" id="particle-select-o3-from"> to <input class="number-input" type="number" id="particle-select-o3-to"></p></td>
-                </tr>
-                <tr>
-                    <td><p><label><input type="checkbox" id="particle-select-co" checked> co</label></td>
-                    <td>: from <input class="number-input" type="number" id="particle-select-co-from"> to <input class="number-input" type="number" id="particle-select-co-to"></p></td>
-                </tr>
-                <tr>
-                    <td><p><label><input type="checkbox" id="particle-select-bc" checked> bc</label></td>
-                    <td>: from <input class="number-input" type="number" id="particle-select-bc-from"> to <input class="number-input" type="number" id="particle-select-bc-to"></p></td>
-                </tr>
-            </table>
-        </ul>
+        <h4>Dates</h4>
+        <table>
+            <tr>
+                <td><p>Date From:</p></td>
+                <td><input type="text" id="fromDatePicker" ng-model="vm.dateFrom" ng-change="vm.updateLocation()"></td>
+            </tr>
+            <tr>
+                <td><p>Date From:</p></td>
+                <td><input type="text" id="toDatePicker" ng-model="vm.dateTo" ng-change="vm.updateLocation()"></td>
+            </tr>
+        </table>
+        <hr>
+        <h4>Particles</h4>
+        <table>
+            <tr>
+                <td><label><input type="checkbox" id="particle-select-pm25" checked> pm25</label></td>
+                <td>: from <input class="number-input" type="number" id="particle-select-pm25-from"> to <input class="number-input" type="number" id="particle-select-pm25-to"></td>
+            </tr>
+            <tr>
+                <td><label><input type="checkbox" id="particle-select-pm10" checked> pm10</label></td>
+                <td>: from <input class="number-input" type="number" id="particle-select-pm10-from"> to <input class="number-input" type="number" id="particle-select-pm10-to"></td>
+            </tr>
+            <tr>
+                <td><label><input type="checkbox" id="particle-select-so2" checked> so2</label></td>
+                <td>: from <input class="number-input" type="number" id="particle-select-so2-from"> to <input class="number-input" type="number" id="particle-select-so2-to"></td>
+            </tr>
+            <tr>
+                <td><label><input type="checkbox" id="particle-select-no2" checked> no2</label></td>
+                <td>: from <input class="number-input" type="number" id="particle-select-no2-from"> to <input class="number-input" type="number" id="particle-select-no2-to"></td>
+            </tr>
+            <tr>
+                <td><label><input type="checkbox" id="particle-select-o3" checked> o3</label></td>
+                <td>: from <input class="number-input" type="number" id="particle-select-o3-from"> to <input class="number-input" type="number" id="particle-select-o3-to"></td>
+            </tr>
+            <tr>
+                <td><label><input type="checkbox" id="particle-select-co" checked> co</label></td>
+                <td>: from <input class="number-input" type="number" id="particle-select-co-from"> to <input class="number-input" type="number" id="particle-select-co-to"></td>
+            </tr>
+            <tr>
+                <td><label><input type="checkbox" id="particle-select-bc" checked> bc</label></td>
+                <td>: from <input class="number-input" type="number" id="particle-select-bc-from"> to <input class="number-input" type="number" id="particle-select-bc-to"></td>
+            </tr>
+        </table>
     </div>
 
     <!-- Bottom content (table and such) -->

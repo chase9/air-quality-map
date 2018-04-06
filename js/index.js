@@ -8,10 +8,7 @@ angular.module('myApp', ['ngMap'])
         vm.center = '44.97772264248057,-93.26501080000003';
         vm.address = 'Minneapolis, Minnesota (US)';
         vm.measurements = [];
-        vm.markers = {
-            coordinates : [],
-            mapItems : []
-        };
+        vm.markers = [];
 
         vm.dateFrom = new Date().toLocaleDateString('en-US', {
             month: '2-digit',
@@ -37,7 +34,7 @@ angular.module('myApp', ['ngMap'])
 
         NgMap.getMap().then(function (map) {
             vm.map = map;
-            vm.markerCluster = new MarkerClusterer(map, vm.markers.mapItems, {
+            vm.markerCluster = new MarkerClusterer(map, [], {
                 imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'
             });
         });
@@ -110,10 +107,11 @@ function processAQ(aqResponse) {
  * This function separates locations based on coordinates and creates a point at each coordinate with related information
  * @param map - The map that will contain our markers
  * @param data - The data that we will create our markers based off of
- * @param markers - A list of all markers that exist on the map
+ * @param markerCoordinates - A list of all coordinates of markers that exist on the map
+ * @param markerCluster - A MarkerCluster object that will cluster our markers
  */
-function createMarker(map, data, markers, markerCluster) {
-    console.log(markers);
+function createMarker(map, data, markerCoordinates, markerCluster) {
+    console.log(markerCoordinates);
 
     // Check for no points found
     if (data.meta.found === 0) { return; }
@@ -123,7 +121,7 @@ function createMarker(map, data, markers, markerCluster) {
     $.each(data.results, (item, val) => {
         let willAdd = true;
 
-        if (markerExists(val.coordinates, markers.coordinates)) {
+        if (markerExists(val.coordinates, markerCoordinates)) {
             willAdd = false;
 
         } else {
@@ -173,7 +171,7 @@ function createMarker(map, data, markers, markerCluster) {
             infoWindow.close();
         });
 
-        markers.coordinates.push(val);
+        markerCoordinates.push(val);
         markerCluster.addMarkers([marker]);
     });
 }
