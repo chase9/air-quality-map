@@ -8,6 +8,10 @@ angular.module('myApp', ['ngMap'])
         vm.center = '44.97772264248057,-93.26501080000003';
         vm.address = 'Minneapolis, Minnesota (US)';
         vm.measurements = [];
+        vm.markers = {
+            coordinates : [],
+            mapItems : []
+        };
 
         vm.dateFrom = new Date().toLocaleDateString('en-US', {
             month: '2-digit',
@@ -33,6 +37,9 @@ angular.module('myApp', ['ngMap'])
 
         NgMap.getMap().then(function (map) {
             vm.map = map;
+            vm.markerCluster = new MarkerClusterer(map, vm.markers.mapItems, {
+                imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'
+            });
         });
 
         vm.updateLocation = function () {
@@ -60,8 +67,6 @@ angular.module('myApp', ['ngMap'])
             dateFrom = dateFrom.getUTCFullYear() + "-" + dateFrom.getUTCMonth() + "-" + dateFrom.getUTCDay();
             dateTo = dateTo.getUTCFullYear() + "-" + dateTo.getUTCMonth() + "-" + dateTo.getUTCDay();
 
-            let parameterString = "";
-
             $.ajax("https://api.openaq.org/v1/measurements?coordinates=" + vm.center + "&date_from=" + dateFrom + "&date_to=" + dateTo)
                 .then((response) => {
 
@@ -71,11 +76,9 @@ angular.module('myApp', ['ngMap'])
                     vm.aqAverage = results.average;
                     vm.measurements = results.measurements;
 
-                    createMarker(vm.map, response);
+                    createMarker(vm.map, response, vm.markers, vm.markerCluster);
                 });
         };
-
-
     });
 
 /**
@@ -107,8 +110,10 @@ function processAQ(aqResponse) {
  * This function separates locations based on coordinates and creates a point at each coordinate with related information
  * @param map - The map that will contain our markers
  * @param data - The data that we will create our markers based off of
+ * @param markers - A list of all markers that exist on the map
  */
-function createMarker(map, data) {
+function createMarker(map, data, markers, markerCluster) {
+    console.log(markers);
 
     // Check for no points found
     if (data.meta.found === 0) { return; }
@@ -116,15 +121,21 @@ function createMarker(map, data) {
     let coordinates = [];
     // Loop through all data points and separate out their coordinates
     $.each(data.results, (item, val) => {
-        let found = false;
+        let willAdd = true;
 
-        $.each(coordinates, (subitem, subval) => {
-            if (val.coordinates.latitude === subval.latitude && val.coordinates.longitude === subval.longitude) {
-                found = true;
-            }
-        });
+        if (markerExists(val.coordinates, markers.coordinates)) {
+            willAdd = false;
 
-        if (!found) {
+        } else {
+            $.each(coordinates, (subitem, subval) => {
+
+                if (val.coordinates.latitude === subval.latitude && val.coordinates.longitude === subval.longitude) {
+                    willAdd = false;
+                }
+            });
+        }
+
+        if (willAdd) {
             coordinates.push(val.coordinates);
         }
     });
@@ -135,7 +146,7 @@ function createMarker(map, data) {
         let contentString = "<table>";
         $.each(data.results, (subitem, subval) => {
             if (subval.coordinates.latitude === val.latitude && subval.coordinates.longitude === val.longitude) {
-                contentString += "<tr><td>(" + subval.date.local + "):</td><td>" + subval.value + " " + subval.unit + "</td><td>" + subval.parameter + "</td></tr>";
+                contentString += "<tr><td>" + subval.location + "</td><td>(" + subval.date.local + "):</td><td>" + subval.value + " " + subval.unit + "</td><td>" + subval.parameter + "</td></tr>";
             }
         });
         contentString += "</table>";
@@ -158,8 +169,23 @@ function createMarker(map, data) {
             infoWindow.open(map, marker)
         });
 
-        marker.addListener('mouseout', function() {
+        marker.addListener('mouseout', function () {
             infoWindow.close();
         });
+
+        markers.coordinates.push(val);
+        markerCluster.addMarkers([marker]);
     });
+}
+
+function markerExists(coordinates, markers) {
+    let found = false;
+
+    $.each(markers, (item, val) => {
+        if (val.latitude === coordinates.latitude && val.longitude === coordinates.longitude) {
+            found = true;
+        }
+    });
+
+    return found;
 }
