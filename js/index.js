@@ -48,7 +48,6 @@ angular.module('myApp', ['ngMap'])
 
             // Update the radius of our map
             vm.radius = getMapRadius(vm.map);
-            console.log(vm.radius);
 
             // Get the address of the center of our map
             $.ajax("https://nominatim.openstreetmap.org/reverse?format=json&lat=" + center.lat() + "&lon=" + center.lng())
@@ -122,8 +121,6 @@ function processAQ(aqResponse) {
  * @param markerCluster - A MarkerCluster object that will cluster our markers
  */
 function createMarker(map, data, markerCoordinates, markerCluster) {
-    console.log(markerCoordinates);
-
     // Check for no points found
     if (data.meta.found === 0) { return; }
 
