@@ -49,6 +49,10 @@ angular.module('myApp', ['ngMap'])
             let dateFrom = fromDatePicker.datepicker('getDate');
             let dateTo = toDatePicker.datepicker('getDate');
 
+            dateFrom = dateFrom.getUTCFullYear() + "-" + dateFrom.getUTCMonth() + "-" + dateFrom.getUTCDay();
+            dateTo = dateTo.getUTCFullYear() + "-" + dateTo.getUTCMonth() + "-" + dateTo.getUTCDay();
+
+
             $http.get("https://api.openaq.org/v1/measurements?coordinates=" + vm.center + "&date_from=" + dateFrom + "&date_to=" + dateTo)
                 .then(function (response) {
                     let results = processAQ(response.data);
@@ -85,7 +89,9 @@ function processAQ(aqResponse) {
 
 function createMarker(map, data) {
 
-    if (data.meta.found === 0) { return; }
+    if (data.meta.found === 0) {
+        return;
+    }
 
     let contentString = "";
     $.each(data.results, (item, val) => {
@@ -101,7 +107,7 @@ function createMarker(map, data) {
         title: 'Data'
     });
 
-    marker.addListener('onmouseover', function() {
+    marker.addListener('onmouseover', function () {
         new google.maps.InfoWindow({
             content: contentString
         }).open(map, marker)
