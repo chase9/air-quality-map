@@ -17,14 +17,10 @@ angular.module('myApp', ['ngMap'])
             let center = vm.map.getCenter();
             vm.center = center.lat() + "," + center.lng();
 
-        $http.get("https://api.openaq.org/v1/measurements?coordinates=" + vm.center)
-            .then(function (response) {
-                vm.aqAverage = averageAQ(response.data);
-            });
-
-        createMarker(vm.map, center);
-    };
-});
+            $.ajax("https://nominatim.openstreetmap.org/reverse?format=json&lat=" + center.lat() + "&lon=" + center.lng())
+                .then((response) => {
+                    vm.address = response['display_name'];
+                });
 
             $http.get("https://api.openaq.org/v1/measurements?coordinates=" + vm.center)
                 .then(function (response) {
