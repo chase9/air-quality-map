@@ -43,7 +43,14 @@ angular.module('myApp', ['ngMap'])
 
             $.ajax("https://nominatim.openstreetmap.org/reverse?format=json&lat=" + center.lat() + "&lon=" + center.lng())
                 .then((response) => {
-                    vm.address = response['display_name'];
+                    let addressString = "";
+                    if (typeof response.address.city === "undefined") {
+                        addressString = response.address.state + " (" + response.address.country_code.toUpperCase()+ ")"
+                    } else {
+                        addressString = response.address.city + ", " + response.address.state + " (" + response.address.country_code.toUpperCase()+ ")"
+                    }
+
+                    vm.address = addressString;
                 });
 
             let dateFrom = fromDatePicker.datepicker('getDate');
@@ -55,6 +62,9 @@ angular.module('myApp', ['ngMap'])
 
             $http.get("https://api.openaq.org/v1/measurements?coordinates=" + vm.center + "&date_from=" + dateFrom + "&date_to=" + dateTo)
                 .then(function (response) {
+
+                    console.log(response);
+
                     let results = processAQ(response.data);
                     vm.aqAverage = results.average;
                     vm.measurements = results.measurements;

@@ -3,7 +3,7 @@ p {
 }
 
 .user-section {
-    width: 50vw;
+    width: calc(50vw - 2em - 1px);
     height: 50vh;
 
     padding-left: 1em;

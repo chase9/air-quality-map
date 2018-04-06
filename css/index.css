@@ -1,28 +1,56 @@
 .overlay {
     position: absolute;
-    top: 12px;
-    left: 110px;
     z-index: 9001;
 }
 
-.overlay input {
-    height: 2em;
-}
-
 ng-map {
-    width: 70vw;
-    min-width: 500px;
+    width: 100vw;
     height: 100vh;
 }
 
-.content {
-    width: 30vw;
-    height: 100vh;
-    /* Color matches Google Maps park colors */
-    background-color: white;
+#search-overlay {
+    top: 12px;
+    left: 110px;
 }
 
-.content table tbody {
+#search-overlay input {
+    height: 2em;
+
+}
+
+#filter-overlay {
+    top: 50px;
+    left: 12px;
+
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 5px;
+
+    padding: 12px;
+}
+
+#filter-overlay p {
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+#filter-overlay .number-input {
+    width: 20px;
+}
+
+#data-overlay {
+    top: 12px;
+    right: 50px;
+
+    width: 25vw;
+    height: calc(100vh - 48px);
+
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 5px;
+
+    padding: 12px;
+}
+
+#data-overlay table tbody {
     display: block;
     top: 50vh;
     max-height: 50vh;
