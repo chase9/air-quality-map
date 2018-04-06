@@ -8,12 +8,36 @@ angular.module('myApp', ['ngMap'])
         vm.center = 'Minneapolis';
         vm.address = 'Minneapolis';
         vm.measurements = [];
+        vm.dateFrom = new Date().toLocaleDateString('en-US', {
+            month: '2-digit',
+            day: '2-digit',
+            year: 'numeric'
+        });
+        vm.dateTo = new Date().toLocaleDateString('en-US', {
+            month: '2-digit',
+            day: '2-digit',
+            year: 'numeric'
+        });
+
+        let fromDatePicker = $('#fromDatePicker');
+        fromDatePicker.datepicker({
+            minDate: "-90d",
+            maxDate: 0
+        });
+        let toDatePicker = $('#toDatePicker');
+        toDatePicker.datepicker({
+            minDate: fromDatePicker.val(),
+            maxDate: 0
+        });
 
         NgMap.getMap().then(function (map) {
             vm.map = map;
         });
 
         vm.updateLocation = function () {
+
+            toDatePicker.datepicker("option", "minDate", fromDatePicker.val());
+
             let center = vm.map.getCenter();
             vm.center = center.lat() + "," + center.lng();
 
@@ -22,7 +46,10 @@ angular.module('myApp', ['ngMap'])
                     vm.address = response['display_name'];
                 });
 
-            $http.get("https://api.openaq.org/v1/measurements?coordinates=" + vm.center)
+            let dateFrom = fromDatePicker.datepicker('getDate');
+            let dateTo = toDatePicker.datepicker('getDate');
+
+            $http.get("https://api.openaq.org/v1/measurements?coordinates=" + vm.center + "&date_from=" + dateFrom + "&date_to=" + dateTo)
                 .then(function (response) {
                     let results = processAQ(response.data);
                     vm.aqAverage = results.average;
@@ -32,6 +59,8 @@ angular.module('myApp', ['ngMap'])
                     createMarker(vm.map, response.data);
                 });
         };
+
+
     });
 
 /**

@@ -8,10 +8,14 @@
 
     <link rel="stylesheet" href="css/master.css" type="text/css">
     <link rel="stylesheet" href="css/index.css" type="text/css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/smoothness/jquery-ui.css" type="text/css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBbz2rOaxZ6BveMBVYl8ZzjRzC0mBdxEyE"></script>
+    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"
+            integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E="
+            crossorigin="anonymous"></script>
     <script src="js/ng-map.min.js"></script>
     <script src="js/index.js"></script>
 </head>
@@ -28,15 +32,25 @@
     <!-- Bottom content (table and such) -->
     <div class="content">
         <table>
-            <tr><h1>Air Quality Readings</h1></tr>
+            <thead><h1>Air Quality Readings</h1></thead>
+            <tbody>
             <tr>
                 <td><h4>Address:</h4></td>
                 <td><h4 ng-bind="vm.address"></h4></td>
             </tr>
             <tr>
+                <td><p>Date from:</td>
+                <td><input type="text" id="fromDatePicker" ng-model="vm.dateFrom" ng-change="vm.updateLocation()"></td>
+            </tr>
+            <tr>
+                <td><p>Date to:</td>
+                <td><input type="text" id="toDatePicker" ng-model="vm.dateTo" ng-change="vm.updateLocation()"></td>
+            </tr>
+            <tr>
                 <td><h4>Air Quality:</h4></td>
                 <td><h4 ng-bind="vm.aqAverage || 'No data available'"></h4></td>
             </tr>
+            </tbody>
         </table>
         <table>
             <tr ng-repeat="x in vm.measurements track by $index">
@@ -46,5 +60,6 @@
         </table>
     </div>
 </div>
+
 </body>
 </html>
