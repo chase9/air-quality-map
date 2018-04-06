@@ -60,8 +60,9 @@ angular.module('myApp', ['ngMap'])
             dateFrom = dateFrom.getUTCFullYear() + "-" + dateFrom.getUTCMonth() + "-" + dateFrom.getUTCDay();
             dateTo = dateTo.getUTCFullYear() + "-" + dateTo.getUTCMonth() + "-" + dateTo.getUTCDay();
 
+            let parameterString = "";
+
             $.ajax("https://api.openaq.org/v1/measurements?coordinates=" + vm.center + "&date_from=" + dateFrom + "&date_to=" + dateTo)
-            //$.getJSON("js/measurements.json")
                 .then((response) => {
 
                     console.log(response);
@@ -79,7 +80,7 @@ angular.module('myApp', ['ngMap'])
 
 /**
  * This function finds the average of air quality measurements returned from openAQ.
- * @param aqResponse the response data from a call to api.openaq.org/v1/measurements
+ * @param aqResponse - The response data from a call to api.openaq.org/v1/measurements
  * @returns {{average: number, measurements: Array}}
  */
 function processAQ(aqResponse) {
@@ -90,7 +91,7 @@ function processAQ(aqResponse) {
     // Iterate through each of the aq results
     $.each(aqResponse['results'], (i, item) => {
         measurements.push({
-            city: item['city'],
+            location: item['location'],
             value: item['value'],
             unit: item['unit'],
             parameter: item['parameter']
@@ -102,36 +103,63 @@ function processAQ(aqResponse) {
     return {average: (aqAverage / count), measurements: measurements};
 }
 
+/**
+ * This function separates locations based on coordinates and creates a point at each coordinate with related information
+ * @param map - The map that will contain our markers
+ * @param data - The data that we will create our markers based off of
+ */
 function createMarker(map, data) {
 
-    if (data.meta.found === 0) {
-        return;
-    }
+    // Check for no points found
+    if (data.meta.found === 0) { return; }
 
-    let contentString = "<ul>";
+    let coordinates = [];
+    // Loop through all data points and separate out their coordinates
     $.each(data.results, (item, val) => {
-        contentString += "<li>" + val.city + ": " + val.value + " " + val.unit + " " + val.parameter + "</li>";
-    });
-    contentString += "</ul>";
+        let found = false;
 
-    let marker = new google.maps.Marker({
-        position: new google.maps.LatLng(
-            data.results[0].coordinates.latitude,
-            data.results[0].coordinates.longitude
-        ),
-        map: map,
-        title: 'Data'
-    });
+        $.each(coordinates, (subitem, subval) => {
+            if (val.coordinates.latitude === subval.latitude && val.coordinates.longitude === subval.longitude) {
+                found = true;
+            }
+        });
 
-    let infoWindow = new google.maps.InfoWindow({
-        content: contentString
+        if (!found) {
+            coordinates.push(val.coordinates);
+        }
     });
 
-    marker.addListener('mouseover', function () {
-        infoWindow.open(map, marker)
-    });
+    // Loop through our separated coordinates
+    $.each(coordinates, (item, val) => {
 
-    marker.addListener('mouseout', function() {
-        infoWindow.close();
+        let contentString = "<table>";
+        $.each(data.results, (subitem, subval) => {
+            if (subval.coordinates.latitude === val.latitude && subval.coordinates.longitude === val.longitude) {
+                contentString += "<tr><td>(" + subval.date.local + "):</td><td>" + subval.value + " " + subval.unit + "</td><td>" + subval.parameter + "</td></tr>";
+            }
+        });
+        contentString += "</table>";
+
+
+        let marker = new google.maps.Marker({
+            position: new google.maps.LatLng(
+                val.latitude,
+                val.longitude
+            ),
+            map: map,
+            title: 'Data'
+        });
+
+        let infoWindow = new google.maps.InfoWindow({
+            content: contentString
+        });
+
+        marker.addListener('mouseover', function () {
+            infoWindow.open(map, marker)
+        });
+
+        marker.addListener('mouseout', function() {
+            infoWindow.close();
+        });
     });
 }
