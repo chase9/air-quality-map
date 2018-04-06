@@ -27,7 +27,9 @@ angular.module('myApp', ['ngMap'])
                     let results = processAQ(response.data);
                     vm.aqAverage = results.average;
                     vm.measurements = results.measurements;
-                    console.log(results);
+
+                    console.log(response);
+                    createMarker(vm.map, response.data);
                 });
         };
     });
@@ -52,10 +54,27 @@ function processAQ(aqResponse) {
     return {average: (aqAverage / count), measurements: measurements};
 }
 
-function createMarker(map, location) {
+function createMarker(map, data) {
+
+    if (data.meta.found === 0) { return; }
+
+    let contentString = "";
+    $.each(data.results, (item, val) => {
+
+    });
+
     let marker = new google.maps.Marker({
-        position: location,
+        position: new google.maps.LatLng(
+            data.results[0].coordinates.latitude,
+            data.results[0].coordinates.longitude
+        ),
         map: map,
-        title: 'Hello World!'
+        title: 'Data'
+    });
+
+    marker.addListener('onmouseover', function() {
+        new google.maps.InfoWindow({
+            content: contentString
+        }).open(map, marker)
     });
 }
