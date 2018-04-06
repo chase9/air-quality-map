@@ -63,8 +63,8 @@
         </table>
         <table>
             <tr ng-repeat="x in vm.measurements track by $index">
-                <td>{{x.address}}</td>
-                <td>{{x.reading}}</td>
+                <td>{{x.city}}</td>
+                <td>{{x.value}} {{x.unit}} {{x.parameter}}</td>
             </tr>
         </table>
     </div>

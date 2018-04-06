@@ -5,8 +5,8 @@ angular.module('myApp', ['ngMap'])
         let vm = this;
 
         vm.aqAverage = 0.0;
-        vm.center = 'Minneapolis';
-        vm.address = 'Minneapolis';
+        vm.center = '44.97772264248057,-93.26501080000003';
+        vm.address = 'Minneapolis, Minnesota (US)';
         vm.measurements = [];
         vm.dateFrom = new Date().toLocaleDateString('en-US', {
             month: '2-digit',
@@ -59,18 +59,17 @@ angular.module('myApp', ['ngMap'])
             dateFrom = dateFrom.getUTCFullYear() + "-" + dateFrom.getUTCMonth() + "-" + dateFrom.getUTCDay();
             dateTo = dateTo.getUTCFullYear() + "-" + dateTo.getUTCMonth() + "-" + dateTo.getUTCDay();
 
-
-            $http.get("https://api.openaq.org/v1/measurements?coordinates=" + vm.center + "&date_from=" + dateFrom + "&date_to=" + dateTo)
-                .then(function (response) {
+            //$.ajax("https://api.openaq.org/v1/measurements?coordinates=" + vm.center + "&date_from=" + dateFrom + "&date_to=" + dateTo)
+            $.getJson("js/measurements.json")
+                .then((response) => {
 
                     console.log(response);
 
-                    let results = processAQ(response.data);
+                    let results = processAQ(response);
                     vm.aqAverage = results.average;
                     vm.measurements = results.measurements;
 
-                    console.log(response);
-                    createMarker(vm.map, response.data);
+                    createMarker(vm.map, response);
                 });
         };
 
@@ -89,7 +88,12 @@ function processAQ(aqResponse) {
 
     // Iterate through each of the aq results
     $.each(aqResponse['results'], (i, item) => {
-        measurements.push({address: item['city'], reading: item['value']});
+        measurements.push({
+            city: item['city'],
+            value: item['value'],
+            unit: item['unit'],
+            parameter: item['parameter']
+        });
         aqAverage += item['value'];
         count = i + 1;
     });
