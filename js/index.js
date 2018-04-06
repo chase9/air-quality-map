@@ -1,6 +1,6 @@
 angular.module('myApp', ['ngMap'])
 
-    .controller('MyCtrl', function (NgMap, $http) {
+    .controller('MyCtrl', function (NgMap) {
 
         let vm = this;
 
@@ -8,6 +8,7 @@ angular.module('myApp', ['ngMap'])
         vm.center = '44.97772264248057,-93.26501080000003';
         vm.address = 'Minneapolis, Minnesota (US)';
         vm.measurements = [];
+
         vm.dateFrom = new Date().toLocaleDateString('en-US', {
             month: '2-digit',
             day: '2-digit',
@@ -59,8 +60,8 @@ angular.module('myApp', ['ngMap'])
             dateFrom = dateFrom.getUTCFullYear() + "-" + dateFrom.getUTCMonth() + "-" + dateFrom.getUTCDay();
             dateTo = dateTo.getUTCFullYear() + "-" + dateTo.getUTCMonth() + "-" + dateTo.getUTCDay();
 
-            //$.ajax("https://api.openaq.org/v1/measurements?coordinates=" + vm.center + "&date_from=" + dateFrom + "&date_to=" + dateTo)
-            $.getJson("js/measurements.json")
+            $.ajax("https://api.openaq.org/v1/measurements?coordinates=" + vm.center + "&date_from=" + dateFrom + "&date_to=" + dateTo)
+            //$.getJSON("js/measurements.json")
                 .then((response) => {
 
                     console.log(response);
@@ -107,10 +108,11 @@ function createMarker(map, data) {
         return;
     }
 
-    let contentString = "";
+    let contentString = "<ul>";
     $.each(data.results, (item, val) => {
-
+        contentString += "<li>" + val.city + ": " + val.value + " " + val.unit + " " + val.parameter + "</li>";
     });
+    contentString += "</ul>";
 
     let marker = new google.maps.Marker({
         position: new google.maps.LatLng(
@@ -121,9 +123,15 @@ function createMarker(map, data) {
         title: 'Data'
     });
 
-    marker.addListener('onmouseover', function () {
-        new google.maps.InfoWindow({
-            content: contentString
-        }).open(map, marker)
+    let infoWindow = new google.maps.InfoWindow({
+        content: contentString
+    });
+
+    marker.addListener('mouseover', function () {
+        infoWindow.open(map, marker)
+    });
+
+    marker.addListener('mouseout', function() {
+        infoWindow.close();
     });
 }
