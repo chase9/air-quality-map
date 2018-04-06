@@ -51,3 +51,11 @@ function processAQ(aqResponse) {
 
     return {average: (aqAverage / count), measurements: measurements};
 }
+
+function createMarker(map, location) {
+    let marker = new google.maps.Marker({
+        position: location,
+        map: map,
+        title: 'Hello World!'
+    });
+}
