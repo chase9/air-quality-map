@@ -5,7 +5,7 @@ p {
 
 .user-section {
     width: calc(50vw - 2em - 1px);
-    height: 50vh;
+    height: 30vh;
 
     padding-left: 1em;
     padding-right: 1em;
@@ -37,7 +37,7 @@ p {
     padding-top: 1em;
 
     width: 100vw;
-    height: calc(50vh - 4em - 2px);
+    height: calc(70vh - 4em - 2px);
 
     -webkit-box-shadow: 0 -8px 33px -1px rgba(0,0,0,0.75);
     -moz-box-shadow: 0 -8px 33px -1px rgba(0,0,0,0.75);
