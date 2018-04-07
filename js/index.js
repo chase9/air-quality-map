@@ -54,9 +54,9 @@ angular.module('myApp', ['ngMap'])
                 .then((response) => {
                     let addressString = "";
                     if (typeof response.address.city === "undefined") {
-                        addressString = response.address.state + " (" + response.address.country_code.toUpperCase()+ ")"
+                        addressString = response.address.state + " (" + response.address.country_code.toUpperCase() + ")"
                     } else {
-                        addressString = response.address.city + ", " + response.address.state + " (" + response.address.country_code.toUpperCase()+ ")"
+                        addressString = response.address.city + ", " + response.address.state + " (" + response.address.country_code.toUpperCase() + ")"
                     }
 
                     vm.address = addressString;
@@ -72,7 +72,7 @@ angular.module('myApp', ['ngMap'])
             dateTo = dateTo.getUTCFullYear() + "-" + dateTo.getUTCMonth() + "-" + dateTo.getUTCDay();
 
             // Make a call to retrieve air quality data
-            $.ajax("https://api.openaq.org/v1/measurements?coordinates=" + vm.center + "&radius=" + vm.radius + "&date_from=" + dateFrom + "&date_to=" + dateTo)
+            $.ajax("https://api.openaq.org/v1/measurements?coordinates=" + vm.center + "&radius=" + vm.radius + "&date_from=" + dateFrom + "&date_to=" + dateTo + buildParameterGET())
                 .then((response) => {
 
                     console.log(response);
@@ -87,6 +87,35 @@ angular.module('myApp', ['ngMap'])
                 });
         };
     });
+
+function buildParameterGET() {
+    let retString = "";
+
+    let selectPM25 = $("#particle-select-pm25");
+    let selectPM10 = $("#particle-select-pm10");
+    let selectSO2 = $("#particle-select-so2");
+    let selectNO2 = $("#particle-select-no2");
+    let selectO3 = $("#particle-select-o3");
+    let selectCO = $("#particle-select-co");
+    let selectBC = $("#particle-select-bc");
+
+    let valueFrom = $('#particle-value-from');
+    let valueTo = $('#particle-value-to');
+
+    let selects = [selectPM25, selectPM10, selectSO2, selectNO2, selectO3, selectCO, selectBC];
+
+    for (let i = 0; i < selects.length; i++) {
+        console.log(selects[i]);
+        if (selects[i].checked) {
+            retString += "&parameter[]=" + selects[i].label;
+        }
+    }
+
+    retString += "&value_from=" + valueFrom.val();
+    retString += "&value_to=" + valueTo.val();
+
+    return retString;
+}
 
 /**
  * This function finds the average of air quality measurements returned from openAQ.
@@ -122,7 +151,9 @@ function processAQ(aqResponse) {
  */
 function createMarker(map, data, markerCoordinates, markerCluster) {
     // Check for no points found
-    if (data.meta.found === 0) { return; }
+    if (data.meta.found === 0) {
+        return;
+    }
 
     let coordinates = [];
     // Loop through all data points and separate out their coordinates
@@ -208,19 +239,20 @@ function getMapRadius(map) {
 }
 
 // https://stackoverflow.com/questions/27928/calculate-distance-between-two-latitude-longitude-points-haversine-formula?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
-function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
+function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
     let R = 6371; // Radius of the earth in km
-    let dLat = deg2rad(lat2-lat1);  // deg2rad below
-    let dLon = deg2rad(lon2-lon1);
+    let dLat = deg2rad(lat2 - lat1);  // deg2rad below
+    let dLon = deg2rad(lon2 - lon1);
     let a =
-        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
         Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-        Math.sin(dLon/2) * Math.sin(dLon/2)
+        Math.sin(dLon / 2) * Math.sin(dLon / 2)
     ;
-    let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     let d = R * c; // Distance in km
     return d;
 }
+
 function deg2rad(deg) {
-    return deg * (Math.PI/180)
+    return deg * (Math.PI / 180)
 }
